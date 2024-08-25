@@ -7,6 +7,7 @@
 - - status codes
 - how to design the api endpoints
 
+
 ____________________
 - implement the REST endpoint for Products toghether
 - document the endpoints with Produces
@@ -62,7 +63,7 @@ Log levels can be set for the namespace in which the functionality is defined. N
 Microsoft: Include all log types in the Microsoft namespace.
 Microsoft.AspNetCore: Include all log types in the Microsoft.AspNetCore namespace.
 Microsoft.AspNetCore.HttpLogging: Include all log types in the Microsoft.AspNetCore. HttpLogging namespace.
-Let’s see HTTP logging in action:
+Letï¿½s see HTTP logging in action:
 
 - adding Odata
    https://github.com/markjprice/apps-services-net8/blob/main/docs/ch08-odata.md
