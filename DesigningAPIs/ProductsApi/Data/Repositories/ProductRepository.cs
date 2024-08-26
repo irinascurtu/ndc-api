@@ -50,5 +50,15 @@ namespace ProductsApi.Data.Repositories
         {
             return await _context.Products.AnyAsync(e => e.Id == id);
         }
+
+        public async Task<IQueryable<Product>> GetProductsAsync(int? categoryId, int? page)
+        {
+            var products = _context.Products.Where(p => p.CategoryId == categoryId);
+            if (page.HasValue)
+            {
+                products = products.Skip((page.Value - 1) * 2).Take(2);
+            }
+            return products;
+        }
     }
 }

@@ -41,5 +41,13 @@ namespace ProductsApi.Service
         {
             return await _productRepository.ProductExistsAsync(id);
         }
+
+        public async Task<IQueryable<Product>> GetProductsAsync(int? categoryId, int? page)
+        {
+            var products = await _productRepository.GetProductsAsync(categoryId, page);
+            //  products = products.Where(x => x.Name.StartsWith("s"));
+
+            return products;
+        }
     }
 }

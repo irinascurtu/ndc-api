@@ -22,7 +22,10 @@ namespace ProductsApi
 
 
             builder.Services.AddDbContext<ProductContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
+            .EnableSensitiveDataLogging());
+
 
             builder.Services.AddScoped<IProductService, ProductService>();
 

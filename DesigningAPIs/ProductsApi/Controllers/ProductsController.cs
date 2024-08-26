@@ -22,10 +22,11 @@ namespace ProductsApi.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts(int? categoryId, int? page)
         {
-            var products = await _productService.GetProductsAsync();
-            return Ok(products);
+            var products = await _productService.GetProductsAsync(categoryId, page);
+            var list = products.ToList();
+            return Ok(list);
             // TODO: add mappings and use the Model if needed
         }
 
@@ -75,9 +76,16 @@ namespace ProductsApi.Controllers
         public async Task<IActionResult> PutProduct(int id, ProductModel modelToUpdate)
         {
 
+            if (id != modelToUpdate.Id)
+            {
+                return BadRequest();
+            }
+
+
             //ADD the check for ID
-            //test with bad data
-            if (!ModelState.IsValid ) {
+            //this is redundant the platform does the checks
+            if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
             }
 
@@ -88,5 +96,51 @@ namespace ProductsApi.Controllers
 
             return Ok(updatedProduct);
         }
+
+
+        // POST: api/Products
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(ProductModel productModel)
+        {
+
+            var productToAdd = _mapper.Map<Product>(productModel);
+
+            var createdProduct = await _productService.AddProductAsync(productToAdd);
+
+            return CreatedAtAction("GetProduct", new { id = createdProduct.Id }, createdProduct);
+        }
+
+
+
+        // DELETE: api/Products/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _productService.GetProductAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            await _productService.DeleteProductAsync(id);
+            return NoContent();
+        }
+
+        [HttpHead("{id}")]
+        public async Task<IActionResult> CheckIfExists(int id)
+        {
+
+            var exists = await _productService.ProductExistsAsync(id);
+
+            HttpContext.Response.Headers.Add("Exists", exists.ToString());
+
+            if (exists == false)
+            {
+                return NotFound();
+            }
+
+            return Ok(exists);
+        }
+
     }
 }
