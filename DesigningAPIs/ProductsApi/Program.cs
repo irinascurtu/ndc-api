@@ -51,7 +51,7 @@ namespace ProductsApi
             {
                 //options.ApiVersionReader = new Asp.Versioning.QueryStringApiVersionReader("v");
                 //options.ApiVersionReader = new Asp.Versioning.HeaderApiVersionReader("api-version");
-                options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
+                //options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
                 //  options.ApiVersionReader = new Asp.Versioning.MediaTypeApiVersionReader("api-version");
 
                 //options.ApiVersionReader = new MediaTypeApiVersionReaderBuilder()

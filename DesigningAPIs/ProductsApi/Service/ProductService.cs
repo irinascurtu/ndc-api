@@ -1,4 +1,5 @@
 ﻿using ProductsApi.Data.Entities;
+using ProductsApi.Data.Extensions;
 using ProductsApi.Data.Repositories;
 
 namespace ProductsApi.Service
@@ -48,6 +49,12 @@ namespace ProductsApi.Service
             //  products = products.Where(x => x.Name.StartsWith("s"));
 
             return products;
+        }
+
+
+        public async Task<IEnumerable<ProductStock>> GetProductStocksAsync(List<int> productIds)
+        {
+            return await _productRepository.GetProductStocksAsync(productIds);
         }
     }
 }
