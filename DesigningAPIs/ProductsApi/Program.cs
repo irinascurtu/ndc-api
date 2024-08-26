@@ -1,4 +1,6 @@
 
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -43,7 +45,42 @@ namespace ProductsApi
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            // builder.Services.AddSwaggerGen();
+          
+            builder.Services.AddApiVersioning(options =>
+            {
+                //options.ApiVersionReader = new Asp.Versioning.QueryStringApiVersionReader("v");
+                //options.ApiVersionReader = new Asp.Versioning.HeaderApiVersionReader("api-version");
+                options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
+                //  options.ApiVersionReader = new Asp.Versioning.MediaTypeApiVersionReader("api-version");
+
+                //options.ApiVersionReader = new MediaTypeApiVersionReaderBuilder()
+                //.Template("application/vnd.example.v{api-version}+json")
+                //.Build();
+
+                // options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2, 0);
+                options.ReportApiVersions = true;
+            }).AddMvc().AddApiExplorer(
+                        options =>
+                        {
+                            // the default is ToString(), but we want "'v'major[.minor][-status]"
+                            options.GroupNameFormat = "'v'VVV";
+                        });
+
+            var provider = builder.Services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    c.SwaggerDoc(description.GroupName, new Microsoft.OpenApi.Models.OpenApiInfo()
+                    {
+                        Title = $"My API {description.ApiVersion}",
+                        Version = description.ApiVersion.ToString()
+                    });
+                }
+            });
+
 
             builder.Services.AddResponseCaching();
 
@@ -53,7 +90,16 @@ namespace ProductsApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                //app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    // Add a Swagger endpoint for each discovered API version
+                    foreach (var description in provider.ApiVersionDescriptions)
+                    {
+                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                    }
+
+                });
 
                 app.UseDeveloperExceptionPage();
                 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())

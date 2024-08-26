@@ -10,7 +10,11 @@ using System.Text.Json;
 
 namespace ProductsApi.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    //[Route("api/products")]
+    [Route("api/v{version:apiVersion}/products")]
+    [Asp.Versioning.ApiVersion("1")]
+    [Asp.Versioning.AdvertiseApiVersions("1")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -40,9 +44,11 @@ namespace ProductsApi.Controllers
 
 
         [HttpGet]
+        [Produces("application/vnd.example.v1+json")]
         public async Task<IActionResult> GetProducts(int? categoryId, int? page)
         {
-            var products = await _productService.GetProductsAsync(categoryId, page);
+            var products = await _productService.GetProductsAsync();
+            // var products = await _productService.GetProductsAsync(categoryId, page);
             var list = products.ToList();
             return Ok(list);
             // TODO: add mappings and use the Model if needed
@@ -237,7 +243,7 @@ namespace ProductsApi.Controllers
 
                 // Set an absolute expiration time for the cache entry.
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20)
-              
+
             };
 
             byte[]? cachedValueBytes =
