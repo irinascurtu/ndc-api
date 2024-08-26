@@ -58,8 +58,8 @@ namespace ProductsApi
                 //.Template("application/vnd.example.v{api-version}+json")
                 //.Build();
 
-                // options.AssumeDefaultVersionWhenUnspecified = true;
-                options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
                 options.ReportApiVersions = true;
             }).AddMvc().AddApiExplorer(
                         options =>
