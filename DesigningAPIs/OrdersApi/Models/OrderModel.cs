@@ -9,7 +9,7 @@ namespace OrdersApi.Models
         {
             Status = OrderStatus.Created;
         }
-        private OrderStatus Status { get; set; }
+        public OrderStatus Status { get; set; }
 
         //customer things
         public string Name { get; set; }
