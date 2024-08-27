@@ -115,5 +115,20 @@ namespace OrdersApi.Controllers
             }
             return true;
         }
+
+        [HttpHead("{id}")]
+        public async Task<IActionResult> GetOrderStatus(int id)
+        {
+            var order = await _orderService.GetOrderAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            HttpContext.Response.Headers.Add("OrderStatus", order.Status.ToString());
+
+            return Accepted();
+        }
+
     }
 }

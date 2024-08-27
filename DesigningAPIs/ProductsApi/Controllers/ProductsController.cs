@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using ProductsApi.Data.Entities;
@@ -11,8 +12,8 @@ using System.Text.Json;
 namespace ProductsApi.Controllers
 {
     //[Route("api/[controller]")]
-    //[Route("api/products")]
-    [Route("api/v{version:apiVersion}/products")]
+    [Route("api/products")]
+    //[Route("api/v{version:apiVersion}/products")]
     [Asp.Versioning.ApiVersion("1")]
     [Asp.Versioning.AdvertiseApiVersions("1")]
     [ApiController]
@@ -45,6 +46,7 @@ namespace ProductsApi.Controllers
 
         [HttpGet]
         [Produces("application/vnd.example.v1+json")]
+        [EnableRateLimiting("concurrency")]
         public async Task<IActionResult> GetProducts(int? categoryId, int? page)
         {
             var products = await _productService.GetProductsAsync();

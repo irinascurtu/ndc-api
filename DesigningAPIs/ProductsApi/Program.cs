@@ -4,12 +4,14 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using ProductsApi.Data;
 using ProductsApi.Data.Repositories;
 using ProductsApi.Infrastructure.Mappings;
 using ProductsApi.Service;
+using System.Threading.RateLimiting;
 
 namespace ProductsApi
 {
@@ -22,6 +24,27 @@ namespace ProductsApi
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(ProductProfileMapping).Assembly);
+
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = 429;
+                
+                //options.OnRejected = (context) =>
+                //{
+                //    context.Response.Headers.Add("Retry-After", "10");
+                //    return Task.CompletedTask;
+                //};
+             
+                options
+                .AddFixedWindowLimiter(policyName: "fixed", options =>
+                {
+
+                    options.PermitLimit = 3;
+                    options.Window = TimeSpan.FromSeconds(12);
+                    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    options.QueueLimit = 0;
+                });
+            });
 
 
             builder.Services.AddDbContext<ProductContext>(options =>
@@ -109,7 +132,7 @@ namespace ProductsApi
                 }
             }
 
-
+            app.UseRateLimiter();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
