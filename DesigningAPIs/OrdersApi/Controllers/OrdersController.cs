@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OrdersApi.Data.Domain;
 using OrdersApi.Models;
 using OrdersApi.Service.Clients;
 using OrdersApi.Services;
+using Stocks;
+using static Stocks.Greeter;
 
 namespace OrdersApi.Controllers
 {
@@ -15,14 +18,16 @@ namespace OrdersApi.Controllers
         private readonly IOrderService _orderService;
         private readonly IProductStockServiceClient _productStockServiceClient;
         private readonly IMapper _mapper;
+        private readonly GreeterClient greeterClient;
 
         public OrdersController(IOrderService orderService,
             IProductStockServiceClient productStockServiceClient,
-            IMapper mapper)
+            IMapper mapper, GreeterClient greeterClient)
         {
             _orderService = orderService;
             _productStockServiceClient = productStockServiceClient;
             _mapper = mapper;
+            this.greeterClient = greeterClient;
         }
 
         [HttpGet]
@@ -78,8 +83,15 @@ namespace OrdersApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(OrderModel model)
         {
-            var stocks = await _productStockServiceClient.GetStock(
-                model.OrderItems.Select(p => p.ProductId).ToList());
+            //var stocks = await _productStockServiceClient.GetStock(
+            //    model.OrderItems.Select(p => p.ProductId).ToList());
+
+            //prepare stock request
+            var stockRequest = new StockRequest();
+            stockRequest.ProductId.AddRange(model.OrderItems.Select(p => p.ProductId));
+
+            //call grpc service
+            var response = greeterClient.GetStock(stockRequest);
 
 
             //To do: Verify stock 
@@ -103,18 +115,18 @@ namespace OrdersApi.Controllers
             return NoContent();
         }
 
-        private async Task<bool> VerifyStocks(List<ProductStock> stocks, List<OrderItemModel> orderItems)
-        {
-            foreach (var item in orderItems)
-            {
-                var stock = stocks.FirstOrDefault(s => s.ProductId == item.ProductId);
-                if (stock == null || stock.Stock < item.Quantity)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        //private async Task<bool> VerifyStocks(List<ProductStock> stocks, List<OrderItemModel> orderItems)
+        //{
+        //    foreach (var item in orderItems)
+        //    {
+        //        var stock = stocks.FirstOrDefault(s => s.ProductId == item.ProductId);
+        //        if (stock == null || stock.Stock < item.Quantity)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
         [HttpHead("{id}")]
         public async Task<IActionResult> GetOrderStatus(int id)

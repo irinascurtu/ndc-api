@@ -34,6 +34,10 @@ namespace OrdersApi
 
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddGrpcClient<Stocks.Greeter.GreeterClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:7106");
+            });
 
             //builder.Services
             //    .AddHttpClient<IProductStockServiceClient, ProductStockServiceClient>()

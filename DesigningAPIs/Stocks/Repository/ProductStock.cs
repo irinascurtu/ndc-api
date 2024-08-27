@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
 
-namespace Stocks.Data.Repository
+using Microsoft.EntityFrameworkCore;
+
+namespace Stocks.Repository
 {
     [Keyless]
 
-    public class ProductStock
+    public partial class ProductStock
     {
         public int ProductId { get; set; }
         public int Stock { get; set; }

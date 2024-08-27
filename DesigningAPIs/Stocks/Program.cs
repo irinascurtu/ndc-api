@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Stocks.Data.Repository;
+using Stocks.Repository;
 using Stocks.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddScoped<IProductStockRepository, ProductStockRepository>();
+
 builder.Services.AddDbContext<StockContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
