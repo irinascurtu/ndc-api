@@ -10,5 +10,6 @@ namespace ProductsApi.Service
         Task<IEnumerable<Product>> GetProductsAsync();
         Task<Product> UpdateProductAsync(Product product);
         Task<bool> ProductExistsAsync(int id);
+        Task<IQueryable<Product>> GetProductsAsync(int? category);
     }
 }

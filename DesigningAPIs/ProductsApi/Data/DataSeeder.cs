@@ -5,7 +5,7 @@ namespace ProductsApi.Data
 {
     public static class DataSeeder
     {
-        static string rootPath = @"D:\ndc\start\k-micro\DesigningAPIs\ProductsApi\";
+        static string rootPath = @"D:\kruk\ndc-api\DesigningAPIs\ProductsApi\";
         public static void SeedData(ProductContext _context)
         {
             if (!_context.Products.Any())

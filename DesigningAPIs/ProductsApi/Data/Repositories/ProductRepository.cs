@@ -17,6 +17,19 @@ namespace ProductsApi.Data.Repositories
             return await _context.Products.ToListAsync();
         }
 
+        public async Task<IQueryable<Product>> GetProductsAsync(int? category)
+        {
+
+            var query = _context.Products.AsQueryable();
+
+            if (category.HasValue)
+            {
+                query= query.Where(p => p.CategoryId == category);
+            }
+
+            return query;
+        }
+
         public async Task<Product> GetProductAsync(int id)
         {
             return await _context.Products.FindAsync(id);
